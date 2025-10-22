@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>David Pedrick's Contact Info</title>
+  <meta name="description" content="Add my contact or share yours in one tap." />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{--bg:#0b0f19;--card:#121826;--text:#e5e7eb;--muted:#9ca3af;--accent:#60a5fa}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
+    .wrap{max-width:680px;margin:0 auto;padding:24px}
+    .card{background:var(--card);border:1px solid #1f2937;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{margin:.25em 0 0;font-size:1.65rem}
+    .sub{color:var(--muted);margin:6px 0 16px}
+  .contact{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .contact-link{color:var(--muted);font-size:.95rem;text-decoration:none}
+    .grid{display:grid;gap:12px}
+    .btn{display:flex;align-items:center;justify-content:center;gap:.5rem;border:1px solid #293241;background:#0f1522;color:var(--text);padding:14px 16px;border-radius:12px;text-decoration:none;cursor:pointer}
+    .btn.primary{background:var(--accent);color:#0b0f19;border-color:transparent;font-weight:600}
+    input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #253046;background:#0f1522;color:var(--text)}
+    .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    .muted{color:var(--muted);font-size:.9rem}
+    .hide{display:none}
+    footer{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.85rem}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1 id="name">David Pedrick</h1>
+      <div class="sub" id="subtitle">Ekotrope • Director of Core Energy Solutions</div>
+      <div class="contact" id="contactInfo" aria-label="contact information">
+        <a id="contactPhone" class="contact-link" href="#"></a>
+        <a id="contactEmail" class="contact-link" href="#"></a>
+        <a id="contactWebsite" class="contact-link" href="#" target="_blank" rel="noopener"></a>
+      </div>
+      
+      <div class="grid" style="margin-bottom:12px">
+        <button class="btn primary" id="btnAdd">Save my contact to your phone</button>
+        <button class="btn" id="btnShare">Email me your contact info</button>
+      </div>
+
+      <form id="form" class="grid hide" novalidate>
+        <div class="row">
+          <input name="first" placeholder="Your name" autocomplete="given-name" required />
+        </div>
+    <input name="phone" placeholder="Phone (optional)" autocomplete="tel" />
+    <input name="website" placeholder="Website (optional)" autocomplete="url" />
+  <textarea name="note" rows="3" placeholder="Note (optional)"></textarea>
+        <button class="btn primary" type="submit">Send Email</button>
+        <div id="status" class="muted"></div>
+      </form>
+
+      <footer>
+        <span id="caps" class="muted"></span>
+        <a id="emailMe" class="muted" href="#"></a>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+  // --- CONFIGURE YOUR DETAILS HERE ---
+  const MY = {
+    fullName: "David Pedrick",           // Update as needed
+    org: "Ekotrope",
+    title: "Director of Core Energy Solutions",
+    phone: "+1-617-286-4609",
+    email: "david@ekotrope.com",
+    address: "Boston, MA, USA",
+    website: "https://www.ekotrope.com"       // optional, used in vCard URL field
+  };
+  // -----------------------------------
+
+  // Inject name/subtitle
+  document.getElementById('name').textContent = MY.fullName;
+  document.getElementById('subtitle').textContent = `${MY.org} • ${MY.title}`;
+  // Set fallback href for the Email link (helps when JS is disabled or as a direct link)
+  const emailMeLink = document.getElementById('emailMe');
+  if (emailMeLink) emailMeLink.href = `mailto:${MY.email}`;
+
+  // Populate contact info block under the title
+  const contactPhone = document.getElementById('contactPhone');
+  const contactEmail = document.getElementById('contactEmail');
+  const contactWebsite = document.getElementById('contactWebsite');
+  if (contactPhone) {
+    contactPhone.href = `tel:${MY.phone}`;
+    contactPhone.textContent = MY.phone;
+  }
+  if (contactEmail) {
+    contactEmail.href = `mailto:${MY.email}`;
+    contactEmail.textContent = MY.email;
+  }
+  if (contactWebsite) {
+    contactWebsite.href = MY.website || '#';
+    contactWebsite.textContent = MY.website ? (new URL(MY.website)).hostname.replace(/^www\./,'') : '';
+  }
+
+  // Build a vCard 3.0 string
+  function buildVCard() {
+    const parts = MY.fullName.trim().split(/\s+/);
+    const last = parts.pop() || "";
+    const first = parts.join(" ");
+    const now = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+    const esc = s => (s||"").replaceAll(",","\\,");
+    const lines = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `N:${esc(last)};${esc(first)};;;`,
+      `FN:${esc(MY.fullName)}`,
+      `ORG:${esc(MY.org)}`,
+      `TITLE:${esc(MY.title)}`,
+      `TEL;TYPE=CELL:${MY.phone}`,
+      `EMAIL;TYPE=INTERNET:${MY.email}`,
+      `ADR;TYPE=WORK:;;${esc(MY.address)};;;`,
+      `URL:${MY.website}`,
+      `REV:${now}`,
+      "END:VCARD"
+    ];
+    return lines.join("\r\n");
+  }
+
+  function downloadVCard() {
+    const blob = new Blob([buildVCard()], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${MY.fullName.replace(/\s+/g,'_')}.vcf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+
+  function openMailto(bodyText, subjectText) {
+    // Build a sensible default and always encode subject/body.
+    const subject = subjectText || 'Great to meet you';
+    // Default to the requested template (blank custom note/name/phone/website when no data provided)
+    const defaultBody = `Nice to meet you. Here is my contact info.\n\n${''}\n\nFrom,\n${''}\n${''}\n${''}`;
+    const body = bodyText || defaultBody;
+    // Use unencoded recipient (some clients expect the raw address) and encode subject/body
+    const mailto = `mailto:${MY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    location.href = mailto;
+  }
+
+  // Buttons
+  document.getElementById('btnAdd').addEventListener('click', downloadVCard);
+  document.getElementById('emailMe').addEventListener('click', (e)=>{ e.preventDefault(); openMailto(); });
+
+  // Share Your Contact (no backend):
+  // 1) If Contact Picker API is available (Chrome/Android + some Chromium), let the user pick a contact and email it to you prefilled.
+  // 2) Otherwise, reveal a tiny form; on submit, open a prefilled mailto: to your inbox.
+  const capsEl = document.getElementById('caps');
+  const form = document.getElementById('form');
+  const statusEl = document.getElementById('status');
+
+  document.getElementById('btnShare').addEventListener('click', () => {
+    // Show the fallback form for users to type/share their contact info
+    capsEl.textContent = '';
+    statusEl.textContent = '';
+    form.classList.remove('hide');
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+  // Build the requested template including the custom note and website
+  const customNote = fd.get('note') || '';
+  const website = fd.get('website') || '';
+  const msg = `Nice to meet you. Here is my contact info.\n\n${customNote}\n\nFrom,\n${fd.get('first')} ${fd.get('last')}\n${fd.get('phone')||''}\n${website}`;
+  location.href = `mailto:${MY.email}?subject=${encodeURIComponent('Nice to meet you')}&body=${encodeURIComponent(msg)}`;
+  });
+  </script>
+</body>
+</html>
