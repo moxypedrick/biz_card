@@ -148,6 +148,15 @@
       margin-top:18px;display:flex;justify-content:space-between;align-items:center;
       color:var(--muted);font-size:.85rem
     }
+
+    .sub a{
+  color: var(--muted);
+  text-decoration: none;
+}
+.sub a:hover{
+  text-decoration: underline;
+}
+
   </style>
 </head>
 <body>
@@ -159,7 +168,8 @@
       <img id="logo" class="logo" src="logo.png" alt="Ekotrope logo">
 
       <h1 id="name">David Pedrick</h1>
-      <div class="sub" id="subtitle">Ekotrope • Director of Core Energy Solutions</div>
+      <div class="sub" id="subtitle">
+        <a href="#" id ="company"></a></div>
 
       <div class="contact" id="contactInfo" aria-label="contact information">
         <a id="contactPhone" class="contact-link" href="#"></a>
@@ -168,8 +178,25 @@
       </div>
 
       <div class="grid" id="buttonRow" style="margin-bottom:12px">
-        <button class="btn" id="btnAdd">Save David's contact to your phone</button>
-        <button class="btn" id="btnShare">Email me your contact info</button>
+        <button class="btn" id="btnAdd">
+          <svg xmlns="http://www.w3.org/2000/svg" 
+           width="16" height="16" viewBox="0 0 24 24" 
+           fill="none" stroke="currentColor" stroke-width="2" 
+           stroke-linecap="round" stroke-linejoin="round" 
+           style="margin-right:6px; vertical-align:middle;">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+      </svg>
+          Save David's contact info</button>
+        <button class="btn" id="btnShare"> <svg xmlns="http://www.w3.org/2000/svg" 
+           width="16" height="16" viewBox="0 0 24 24" 
+           fill="none" stroke="currentColor" stroke-width="2" 
+           stroke-linecap="round" stroke-linejoin="round" 
+           style="margin-right:6px; vertical-align:middle;">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg> Email David your contact info</button>
       </div>
 
       <form id="form" class="grid collapsed" novalidate>
@@ -177,7 +204,7 @@
           <input name="first" placeholder="Your first name" autocomplete="given-name" required />
           <input name="last" placeholder="Your last name" autocomplete="family-name" required />
         </div>
-        <input type="tel" inputmode = "tel" name="phone" placeholder="Phone" autocomplete="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
+        <input id = "phone" type="tel" inputmode = "tel" name="phone" placeholder="Phone" autocomplete="tel"  required />
         <input name="website" placeholder="Website (optional)" autocomplete="url" />
         <div id="status" class="muted"></div>
       </form>
@@ -208,8 +235,6 @@
 
   // Inject name/subtitle
   document.getElementById('name').textContent = MY.fullName;
-  document.getElementById('subtitle').textContent = `${MY.org} • ${MY.title}`;
-
   // Set images
   const avatarEl = document.getElementById('avatar');
   const logoEl = document.getElementById('logo');
@@ -224,6 +249,7 @@
   const contactPhone = document.getElementById('contactPhone');
   const contactEmail = document.getElementById('contactEmail');
   const contactLocation = document.getElementById('contactLocation');
+  const companyLink = document.getElementById('company');
   if (contactPhone) {
     contactPhone.href = `tel:${MY.phone}`;
     contactPhone.textContent = MY.phone;
@@ -236,6 +262,36 @@
     const locText = `${MY.city}, ${MY.state}`;
     contactLocation.textContent = locText;
   }
+  if(companyLink){
+    companyLink.textContent = `${MY.org} • ${MY.title}`;
+    companyLink.href = MY.website;
+    companyLink.target = '_blank';
+    companyLink.rel = 'noopener noreferrer';
+  }
+
+
+  const phoneInput = document.getElementById('phone');
+
+  phoneInput.addEventListener('input', (e) => {
+   let value = e.target.value.replace(/\D/g, ''); // remove all non-digits
+
+    // Handle optional country code
+    let country = '';
+    if (value.startsWith('1')) {
+      country = '1 ';
+      value = value.slice(1);
+    }
+
+    if (value.length > 0 && value.length <= 3) {
+      value = `${value.slice(0,3)}`;
+    } else if (value.length > 3 && value.length <= 6) {
+      value = `${value.slice(0,3)} ${value.slice(3)}`;
+    } else if (value.length > 6) {
+      value = `${value.slice(0,3)} ${value.slice(3,6)} ${value.slice(6,10)}`;
+    }
+
+    e.target.value = country + value.trim();
+  });
 
   // Build a vCard 3.0 string
   function buildVCard() {
