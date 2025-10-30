@@ -5,61 +5,180 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>David Pedrick's Contact Info</title>
   <meta name="description" content="Add my contact or share yours in one tap." />
-  <meta name="theme-color" content="#0b0f19" />
+  <meta name="theme-color" content="#005A76" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{--bg:#0b0f19;--card:#121826;--text:#e5e7eb;--muted:#9ca3af;--accent:#60a5fa}
+    /* --- Palette --- */
+    :root{
+      --p1:#005A76;      /* Primary 1 */
+      --p2:#C6D92F;      /* Primary 2 (highlight) */
+      --s1:#EA594D;      /* Secondary 1 (minimal) */
+      --s2:#2993BF;      /* Secondary 2 (buttons base) */
+      --p5:#ffffff;      /* Primary 5 (white) */
+      --ink:#0b0f19;
+      --muted:#6b7280;
+    }
+
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
-    .wrap{max-width:680px;margin:0 auto;padding:24px}
-    .card{background:var(--card);border:1px solid #1f2937;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    h1{margin:.25em 0 0;font-size:1.65rem}
-    .sub{color:var(--muted);margin:6px 0 6px}
-  .contact{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
-  .contact-link{color:var(--muted);font-size:.85rem;text-decoration:none;display:block}
+    body{
+      margin:0;
+      font:16px/1.55 Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--ink);
+      /* Single tone background */
+      background: var(--p1);
+      -webkit-tap-highlight-color: transparent; /* nicer tap behavior on mobile */
+    }
+
+    .wrap{max-width:720px;margin:0 auto;padding:28px}
+    .card{
+      position:relative;
+      background:var(--p5);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:20px;
+      padding:26px 24px 22px;
+      box-shadow:0 20px 40px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+    }
+
+    /* NEW ELEMENT 1: Profile Photo */
+    .avatar{
+      width:80px;height:80px;border-radius:50%;
+      object-fit:cover; object-position:center;
+      border:3px solid var(--p5);
+      box-shadow:0 8px 18px rgba(0,0,0,.12);
+      margin-bottom:10px;
+    }
+
+    /* NEW ELEMENT 2: Company Logo (top-right) */
+    .logo{
+      position:absolute; top:18px; right:18px;
+      height:28px; width:auto; opacity:.9;
+    }
+
+    h1{margin:.1em 0 2px;font-size:1.8rem;letter-spacing:.2px}
+    .sub{color:var(--muted);margin:4px 0 10px;font-weight:500}
+
+    .contact{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+    .contact-link{
+      color:#334155;text-decoration:none;font-size:.92rem;
+      display:inline-flex; align-items:center; gap:.5rem;
+      transition:color .18s ease, transform .18s ease;
+    }
+    .contact-link:hover{color:var(--p1); transform:translateX(1px)}
+
     .grid{display:grid;gap:12px}
-  .btn{display:flex;align-items:center;justify-content:center;gap:.5rem;border:1px solid #293241;background:#0f1522;color:var(--text);padding:14px 16px;border-radius:12px;text-decoration:none;cursor:pointer}
-    .btn.primary{background:var(--accent);color:#0b0f19;border-color:transparent;font-weight:600}
-  #btnShare{transition:transform .35s cubic-bezier(.2,.9,.2,1),background-color .18s ease,border-color .18s ease}
-  .btn.ready{background:#34d399;color:#072;border-color:transparent}
-  .btn.slide-in{transform:translateY(0);opacity:1}
-    input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #253046;background:#0f1522;color:var(--text)}
+
+    /* Buttons use Secondary 2 by default */
+    .btn{
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      border:1px solid rgba(0,0,0,.10);
+      background:var(--s2);
+      color:#fff;
+      padding:14px 16px;border-radius:12px;text-decoration:none;cursor:pointer;
+      transition:transform .2s ease, box-shadow .2s ease, filter .2s ease, opacity .2s ease, background-color .18s ease;
+      user-select:none;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      background: var(--p1);
+      box-shadow:0 10px 20px rgba(0,0,0,.08);
+      filter:brightness(1.05);
+    }
+    /* NEW: tactile pressed feedback */
+    .btn:active{ filter:brightness(.9); transform:translateY(0); }
+
+    .btn.primary{ /* keep same base as other buttons */
+      background:var(--s2);
+      color:#fff;
+      font-weight:600;
+    }
+
+    /* Highlight state for the Email button (Primary 2) */
+    .btn.highlight{
+      background:var(--p2);
+      color:#0b1a22;
+      font-weight:700;
+    }
+
+    /* Disabled attribute = truly disabled (not used in our flow, but kept for semantics elsewhere) */
+    .btn[disabled]{
+      background:#e5e7eb !important;
+      color:#9ca3af !important;
+      border-color:#e5e7eb !important;
+      cursor:not-allowed;
+      pointer-events:none; /* actually unclickable */
+      box-shadow:none;
+      transform:none;
+    }
+
+    /* NEW: Greyed visual state WITHOUT disabling clicks */
+    .btn.is-muted{
+      background:#e5e7eb !important;
+      color:#6b7280 !important;
+      border-color:#e5e7eb !important;
+      box-shadow:none;
+      transform:none;
+    }
+
+    /* Minimal Secondary 1 usage as tiny active glow */
+    .btn.primary:active{box-shadow:0 0 0 3px color-mix(in srgb, var(--s1) 18%, transparent)}
+
+    input,textarea{
+      width:100%;padding:12px 14px;border-radius:12px;
+      border:1px solid #e5e7eb;background:#fff;color:#0b1a22;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus,textarea:focus{
+      outline:none;border-color: var(--p2); /* close to p2 but subtle */
+      box-shadow:0 0 0 4px color-mix(in oklab, var(--p2) 20%, transparent);
+    }
+
     .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
     .muted{color:var(--muted);font-size:.9rem}
-  .hide{display:none}
-  /* collapsed/expanded animation for the contact form so it pushes the buttons down */
-  .collapsed{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.2,.9,.2,1),padding .2s ease}
-  .expanded{max-height:420px}
-    footer{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.85rem}
+    .hide{display:none}
+
+    .collapsed{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.2,.9,.2,1),padding .2s ease}
+    .expanded{max-height:420px}
+
+    #btnShare{transition:transform .35s cubic-bezier(.2,.9,.2,1),background-color .18s ease,border-color .18s ease}
+    .btn.slide-in{transform:translateY(0);opacity:1}
+
+    footer{
+      margin-top:18px;display:flex;justify-content:space-between;align-items:center;
+      color:var(--muted);font-size:.85rem
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
+      <!-- NEW ELEMENT 1 -->
+      <img id="avatar" class="avatar" src="profile.jpg" alt="Photo of David Pedrick">
+      <!-- NEW ELEMENT 2 -->
+      <img id="logo" class="logo" src="logo.png" alt="Ekotrope logo">
+
       <h1 id="name">David Pedrick</h1>
       <div class="sub" id="subtitle">Ekotrope • Director of Core Energy Solutions</div>
+
       <div class="contact" id="contactInfo" aria-label="contact information">
         <a id="contactPhone" class="contact-link" href="#"></a>
         <a id="contactEmail" class="contact-link" href="#"></a>
-        <a id="contactLocation" class="contact-link" href="#" target="_blank" rel="noopener"></a>
+        <a id="contactLocation" class="contact-link" ></a>
       </div>
-      
+
       <div class="grid" id="buttonRow" style="margin-bottom:12px">
-        <button class="btn primary" id="btnAdd">Save David's contact to your phone</button>
+        <button class="btn" id="btnAdd">Save David's contact to your phone</button>
         <button class="btn" id="btnShare">Email me your contact info</button>
       </div>
 
-  <form id="form" class="grid collapsed" novalidate>
+      <form id="form" class="grid collapsed" novalidate>
         <div class="row">
           <input name="first" placeholder="Your first name" autocomplete="given-name" required />
-          <input name="last" placeholder="last name" autocomplete="family-name" required />
+          <input name="last" placeholder="Your last name" autocomplete="family-name" required />
         </div>
-    <input name="phone" placeholder="Phone" autocomplete="tel" required />
-    <input name="website" placeholder="Website (optional)" autocomplete="url" />
-  <textarea name="note" rows="3" placeholder="Note (optional)"></textarea>
-  <!-- Using the top "Email me your contact info" button to submit. Removed internal submit button. -->
+        <input type="tel" inputmode = "tel" name="phone" placeholder="Phone" autocomplete="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
+        <input name="website" placeholder="Website (optional)" autocomplete="url" />
         <div id="status" class="muted"></div>
       </form>
 
@@ -73,7 +192,7 @@
   <script>
   // --- CONFIGURE YOUR DETAILS HERE ---
   const MY = {
-    fullName: "David Pedrick",           // Update as needed
+    fullName: "David Pedrick",
     org: "Ekotrope",
     title: "Director of Core Energy Solutions",
     phone: "+1-617-286-4609",
@@ -81,18 +200,27 @@
     address: "Boston, MA, USA",
     city: "Boston",
     state: "MA",
-    website: "https://www.ekotrope.com"       // optional, used in vCard URL field
+    website: "https://www.ekotrope.com",
+    photoUrl: "profile.jpg",
+    logoUrl: "logo.png"
   };
   // -----------------------------------
 
   // Inject name/subtitle
   document.getElementById('name').textContent = MY.fullName;
   document.getElementById('subtitle').textContent = `${MY.org} • ${MY.title}`;
-  // Set fallback href for the Email link (helps when JS is disabled or as a direct link)
+
+  // Set images
+  const avatarEl = document.getElementById('avatar');
+  const logoEl = document.getElementById('logo');
+  if (avatarEl && MY.photoUrl) avatarEl.src = MY.photoUrl;
+  if (logoEl && MY.logoUrl) logoEl.src = MY.logoUrl;
+
+  // Set fallback href for the Email link
   const emailMeLink = document.getElementById('emailMe');
   if (emailMeLink) emailMeLink.href = `mailto:${MY.email}`;
 
-  // Populate contact info block under the title
+  // Populate contact info block
   const contactPhone = document.getElementById('contactPhone');
   const contactEmail = document.getElementById('contactEmail');
   const contactLocation = document.getElementById('contactLocation');
@@ -105,17 +233,7 @@
     contactEmail.textContent = MY.email;
   }
   if (contactLocation) {
-    // Prefer explicit city/state if present; otherwise fall back to address.
-    let locText = '';
-    let locQuery = '';
-    if (MY.city && MY.state) {
-      locText = `${MY.city}, ${MY.state}`;
-      locQuery = encodeURIComponent(`${MY.city}, ${MY.state}`);
-    } else if (MY.address) {
-      locText = MY.address;
-      locQuery = encodeURIComponent(MY.address);
-    }
-    contactLocation.href = locQuery ? `https://www.google.com/maps/search/?api=1&query=${locQuery}` : '#';
+    const locText = `${MY.city}, ${MY.state}`;
     contactLocation.textContent = locText;
   }
 
@@ -127,8 +245,7 @@
     const now = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
     const esc = s => (s||"").replaceAll(",","\\,");
     const lines = [
-      "BEGIN:VCARD",
-      "VERSION:3.0",
+      "BEGIN:VCARD","VERSION:3.0",
       `N:${esc(last)};${esc(first)};;;`,
       `FN:${esc(MY.fullName)}`,
       `ORG:${esc(MY.org)}`,
@@ -156,28 +273,22 @@
   }
 
   function openMailto(bodyText, subjectText) {
-    // Build a sensible default and always encode subject/body.
     const subject = subjectText || 'Great to meet you';
-    // Default to the requested template (blank custom note/name/phone/website when no data provided)
     const defaultBody = `Here is my contact info.\n\n${''}\n\nFrom,\n${''}\n${''}\n${''}`;
     const body = bodyText || defaultBody;
-    // Use unencoded recipient (some clients expect the raw address) and encode subject/body
     const mailto = `mailto:${MY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     location.href = mailto;
   }
 
   // Buttons
-  document.getElementById('btnAdd').addEventListener('click', downloadVCard);
+  const btnAdd = document.getElementById('btnAdd');
+  const btnShare = document.getElementById('btnShare');
+  if (btnAdd) btnAdd.addEventListener('click', downloadVCard);
   document.getElementById('emailMe').addEventListener('click', (e)=>{ e.preventDefault(); openMailto(); });
 
-  // Share Your Contact (no backend):
-  // 1) If Contact Picker API is available (Chrome/Android + some Chromium), let the user pick a contact and email it to you prefilled.
-  // 2) Otherwise, reveal a tiny form; on submit, open a prefilled mailto: to your inbox.
-  const capsEl = document.getElementById('caps');
+  // Share Your Contact (no backend)
   const form = document.getElementById('form');
-  const statusEl = document.getElementById('status');
-  const btnShare = document.getElementById('btnShare');
-  // Helper: check required fields
+
   function formIsValid() {
     const f = form.querySelector('[name="first"]');
     const l = form.querySelector('[name="last"]');
@@ -187,53 +298,63 @@
 
   function updateShareButtonState() {
     if (formIsValid()) {
-      btnShare.classList.add('ready');
+      btnShare.classList.add('highlight');
       btnShare.textContent = 'Send Email';
     } else {
-      btnShare.classList.remove('ready');
-      btnShare.textContent = 'Email me your contact info';
+      btnShare.classList.remove('highlight');
+      btnShare.textContent = 'Email David your contact info';
     }
   }
 
-  // show form with slide-down effect
+  // show form with slide-down effect + visually mute Add button + highlight Email button
   let formVisible = false;
   btnShare.addEventListener('click', (e) => {
     e.preventDefault();
+
+    // First click: reveal form, visually mute Add, highlight Email
     if (!formVisible) {
-      // reveal form and allow CSS max-height to animate layout
       form.classList.remove('collapsed');
       form.classList.add('expanded');
-      // move the share button after the form in the DOM so it appears under it
+
+      // move the share button after the form
       const buttonRow = document.getElementById('buttonRow');
       const parent = buttonRow.parentNode;
       parent.insertBefore(btnShare, form.nextSibling);
-      // prepare animation
-      btnShare.classList.add('slide-in');
+
+      btnShare.classList.add('slide-in', 'highlight'); // Primary 2 highlight
+
+      // Grey out Add Contact but KEEP it clickable
+      btnAdd.classList.add('is-muted');
+
       formVisible = true;
-      // attach input listeners to validate
       form.querySelectorAll('input,textarea').forEach(inp => inp.addEventListener('input', updateShareButtonState));
       updateShareButtonState();
       return;
     }
-    // If form visible and valid, send mail
-  if (formVisible && formIsValid()) {
+
+    // Second click: if valid, send email and restore buttons
+    if (formVisible && formIsValid()) {
       const fd = new FormData(form);
       const customNote = fd.get('note') || '';
       const website = fd.get('website') || '';
-      const msg = `Nice to meet you. Here is my contact info.\n\n${customNote}\n\nFrom,\n${fd.get('first')} ${fd.get('last')}\n${fd.get('phone')||''}\n${website}`;
+      const msg = `Hi David - Here is my contact info.\n\n${customNote}\n\nFrom,\n${fd.get('first')} ${fd.get('last')}\n${fd.get('phone')||''}\n${website}`;
       location.href = `mailto:${MY.email}?subject=${encodeURIComponent('Nice to meet you')}&body=${encodeURIComponent(msg)}`;
-      
-      // collapse the form after sending
+
+      // collapse form
       form.classList.remove('expanded');
       form.classList.add('collapsed');
       formVisible = false;
-  // move the share button back to the original button row and remove animation class
-  const buttonRow = document.getElementById('buttonRow');
-  buttonRow.appendChild(btnShare);
-  btnShare.classList.remove('slide-in');
-      updateShareButtonState();
+
+      // move share button back and remove highlight
+      const buttonRow = document.getElementById('buttonRow');
+      buttonRow.appendChild(btnShare);
+      btnShare.classList.remove('slide-in', 'highlight');
+      btnShare.textContent = 'Email me your contact info';
+
+      // Restore Add Contact visual state
+      btnAdd.classList.remove('is-muted');
     } else {
-      // not valid yet — focus first missing field
+      // focus first missing field for clarity
       const f = form.querySelector('[name="first"]');
       const l = form.querySelector('[name="last"]');
       if (f && f.value.trim() === '') f.focus();
@@ -243,4 +364,3 @@
   </script>
 </body>
 </html>
-
