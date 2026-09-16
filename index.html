@@ -184,10 +184,6 @@
             </div>
           </div>
           <div>
-            <label for="phone">Your phone number</label>
-            <input id="phone" type="tel" inputmode="tel" name="phone" placeholder="617 555 0123" autocomplete="tel" required />
-          </div>
-          <div>
             <label for="note">Message to David <small>(edit if you like)</small></label>
             <textarea id="note" name="note" rows="2"></textarea>
           </div>
@@ -196,7 +192,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
             </svg>
-            <span id="btnSendText">Enter your name and phone to continue</span>
+            <span id="btnSendText">Enter your name to continue</span>
           </button>
           <p class="hint muted" id="hint">Opens your default mail app. Remember to press Send there.</p>
         </form>
@@ -264,7 +260,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     logoUrl: "logo.png",
     // Public URL where this page lives. Used for the QR link. If blank, the
     // browser's current address is used (which fails for local files).
-    pageUrl: "https://moxypedrick.github.io/biz_card/",
+    pageUrl: "",
     // Message shown when you haven't set one in the gear menu.
     defaultNote: "Great meeting you!"
   };
@@ -293,27 +289,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const noteField = document.getElementById('note');
   noteField.value = activeNote();
 
-  // --- Phone formatting ---
-  document.getElementById('phone').addEventListener('input', (e) => {
-    let value = e.target.value.replace(/\D/g, '');
-    let country = '';
-    if (value.startsWith('1') && value.length > 10) { country = '1 '; value = value.slice(1); }
-    if (value.length > 6) value = `${value.slice(0,3)} ${value.slice(3,6)} ${value.slice(6,10)}`;
-    else if (value.length > 3) value = `${value.slice(0,3)} ${value.slice(3)}`;
-    e.target.value = country + value.trim();
-  });
-
   // --- Email flow ---
   const form = document.getElementById('form');
   const btnSend = document.getElementById('btnSend');
   const btnSendText = document.getElementById('btnSendText');
   const hint = document.getElementById('hint');
   const fallback = document.getElementById('fallback');
-  const f = () => form.first.value.trim(), l = () => form.last.value.trim(), p = () => form.phone.value.trim();
-  const formIsValid = () => f() && l() && p();
+  const f = () => form.first.value.trim(), l = () => form.last.value.trim();
+  const formIsValid = () => f() && l();
 
   function emailParts() {
-    const body = `Hi ${firstName} - ${noteField.value.trim() || MY.defaultNote}\n\nHere's my contact info:\n${f()} ${l()}\n${p()}`;
+    const body = `Hi ${firstName} - ${noteField.value.trim() || MY.defaultNote}\n\nHere's my contact info:\n${f()} ${l()}`;
     const subject = `Nice to meet you - ${f()} ${l()}`;
     return { subject, body };
   }
@@ -324,7 +310,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       btnSendText.textContent = `Open email to ${firstName}`;
     } else {
       btnSend.classList.add('is-muted'); btnSend.classList.remove('ready');
-      btnSendText.textContent = 'Enter your name and phone to continue';
+      btnSendText.textContent = 'Enter your name to continue';
     }
   }
   form.querySelectorAll('input').forEach(i => i.addEventListener('input', updateSendButton));
@@ -332,7 +318,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   btnSend.addEventListener('click', () => {
     if (!formIsValid()) {
-      const missing = [form.first, form.last, form.phone].find(x => !x.value.trim());
+      const missing = [form.first, form.last].find(x => !x.value.trim());
       if (missing) missing.focus();
       return;
     }
