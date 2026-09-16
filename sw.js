@@ -1,5 +1,5 @@
 // Caches the page and its assets so it opens with no connection.
-const CACHE = 'contact-card-v1';
+const CACHE = 'contact-card-v2';
 const ASSETS = ['./', './index.html', './profile.jpg', './logo.png',
   './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
