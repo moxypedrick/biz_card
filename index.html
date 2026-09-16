@@ -2,35 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>David Pedrick's Contact Info</title>
-  <meta name="description" content="Add my contact or share yours in one tap." />
+  <meta name="description" content="Send David your contact info in one tap." />
   <meta name="theme-color" content="#005A76" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="David's Card" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* --- Palette --- */
     :root{
-      --p1:#005A76;      /* Primary 1 */
-      --p2:#C6D92F;      /* Primary 2 (highlight) */
-      --s1:#EA594D;      /* Secondary 1 (minimal) */
-      --s2:#2993BF;      /* Secondary 2 (buttons base) */
-      --p5:#ffffff;      /* Primary 5 (white) */
+      --p1:#005A76;
+      --p2:#C6D92F;
+      --s1:#EA594D;
+      --s2:#2993BF;
+      --p5:#ffffff;
       --ink:#0b0f19;
       --muted:#6b7280;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
       font:16px/1.55 Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       color:var(--ink);
-      /* Single tone background */
       background: var(--p1);
-      -webkit-tap-highlight-color: transparent; /* nicer tap behavior on mobile */
+      -webkit-tap-highlight-color: transparent;
+      padding-top: env(safe-area-inset-top);
     }
-
     .wrap{max-width:720px;margin:0 auto;padding:28px}
     .card{
       position:relative;
@@ -40,8 +43,6 @@
       padding:26px 24px 22px;
       box-shadow:0 20px 40px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
     }
-
-    /* NEW ELEMENT 1: Profile Photo */
     .avatar{
       width:80px;height:80px;border-radius:50%;
       object-fit:cover; object-position:center;
@@ -49,172 +50,203 @@
       box-shadow:0 8px 18px rgba(0,0,0,.12);
       margin-bottom:10px;
     }
-
-    /* NEW ELEMENT 2: Company Logo (top-right) */
-    .logo{
-      position:absolute; top:18px; right:18px;
-      height:35px; width:auto; opacity:.9;
-    }
+    .logo{ position:absolute; top:18px; right:18px; height:35px; width:auto; opacity:.9; }
 
     h1{margin:.1em 0 2px;font-size:1.8rem;letter-spacing:.2px}
+    h2{margin:0 0 4px;font-size:1.15rem;font-weight:600}
     .sub{color:var(--muted);margin:4px 0 10px;font-weight:500}
+    .sub a{ color: var(--muted); text-decoration: none; }
+    .sub a:hover{ text-decoration: underline; }
 
-    .contact{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+    .contact{display:flex;flex-direction:column;gap:4px;margin-bottom:18px}
     .contact-link{
       color:#334155;text-decoration:none;font-size:.92rem;
       display:inline-flex; align-items:center; gap:.5rem;
-      transition:color .18s ease, transform .18s ease;
     }
-    .contact-link:hover{color:var(--p1); transform:translateX(1px)}
+    .contact-link:hover{color:var(--p1)}
+
+    .lead{ color:var(--muted); margin:0 0 14px; font-size:.95rem; }
 
     .grid{display:grid;gap:12px}
+    .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    @media (max-width:420px){ .row{grid-template-columns:1fr} }
 
-    /* Buttons use Secondary 2 by default */
-    .btn{
-      display:flex;align-items:center;justify-content:center;gap:.5rem;
-      border:1px solid rgba(0,0,0,.10);
-      background:var(--s2);
-      color:#fff;
-      padding:14px 16px;border-radius:12px;text-decoration:none;cursor:pointer;
-      transition:transform .2s ease, box-shadow .2s ease, filter .2s ease, opacity .2s ease, background-color .18s ease;
-      user-select:none;
-    }
-    .btn:hover{
-      transform:translateY(-1px);
-      background: var(--p1);
-      box-shadow:0 10px 20px rgba(0,0,0,.08);
-      filter:brightness(1.05);
-    }
-    /* NEW: tactile pressed feedback */
-    .btn:active{ filter:brightness(.9); transform:translateY(0); }
-
-    .btn.primary{ /* keep same base as other buttons */
-      background:var(--s2);
-      color:#fff;
-      font-weight:600;
-    }
-
-    /* Highlight state for the Email button (Primary 2) */
-    .btn.highlight{
-      background:var(--p2);
-      color:#0b1a22;
-      font-weight:700;
-    }
-
-    /* Disabled attribute = truly disabled (not used in our flow, but kept for semantics elsewhere) */
-    .btn[disabled]{
-      background:#e5e7eb !important;
-      color:#9ca3af !important;
-      border-color:#e5e7eb !important;
-      cursor:not-allowed;
-      pointer-events:none; /* actually unclickable */
-      box-shadow:none;
-      transform:none;
-    }
-
-    /* NEW: Greyed visual state WITHOUT disabling clicks */
-    .btn.is-muted{
-      background:#e5e7eb !important;
-      color:#6b7280 !important;
-      border-color:#e5e7eb !important;
-      box-shadow:none;
-      transform:none;
-    }
-
-    /* Minimal Secondary 1 usage as tiny active glow */
-    .btn.primary:active{box-shadow:0 0 0 3px color-mix(in srgb, var(--s1) 18%, transparent)}
-
+    label{ display:block; font-size:.85rem; font-weight:600; color:#334155; margin-bottom:4px; }
+    label small{ font-weight:400; color:var(--muted); }
     input,textarea{
       width:100%;padding:12px 14px;border-radius:12px;
       border:1px solid #e5e7eb;background:#fff;color:#0b1a22;
-      transition:border-color .15s ease, box-shadow .15s ease;
+      font:inherit;
     }
+    textarea{ resize:vertical; min-height:72px; }
     input:focus,textarea:focus{
-      outline:none;border-color: var(--p2); /* close to p2 but subtle */
+      outline:none;border-color: var(--p2);
       box-shadow:0 0 0 4px color-mix(in oklab, var(--p2) 20%, transparent);
     }
 
-    .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    .btn{
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      border:1px solid rgba(0,0,0,.10);
+      background:var(--s2); color:#fff;
+      padding:14px 16px;border-radius:12px;text-decoration:none;cursor:pointer;
+      font:inherit; font-weight:600;
+      transition:background-color .18s ease, box-shadow .18s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: var(--p1); box-shadow:0 10px 20px rgba(0,0,0,.08); }
+    .btn:active{ filter:brightness(.9); }
+    .btn.ready{ background:var(--p2); color:#0b1a22; font-weight:700; }
+    .btn.ready:hover{ background:#b7c92a; }
+    .btn.is-muted{ background:#e5e7eb; color:#6b7280; border-color:#e5e7eb; box-shadow:none; }
+    .btn:focus-visible{ outline:3px solid var(--p2); outline-offset:2px; }
+
+    .btn-ghost{
+      background:transparent; color:var(--p1); border:1px solid #cfd8dc; font-weight:500;
+    }
+    .btn-ghost:hover{ background:#f1f5f9; box-shadow:none; }
+
     .muted{color:var(--muted);font-size:.9rem}
-    .hide{display:none}
-
-    .collapsed{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.2,.9,.2,1),padding .2s ease}
-    .expanded{max-height:420px}
-
-    #btnShare{transition:transform .35s cubic-bezier(.2,.9,.2,1),background-color .18s ease,border-color .18s ease}
-    .btn.slide-in{transform:translateY(0);opacity:1}
+    .hint{ margin:6px 0 0; text-align:center; }
+    .hint.ok{ color:var(--p1); font-weight:500; }
+    .fallback{ margin-top:14px; padding-top:14px; border-top:1px dashed #e5e7eb; }
+    .fallback p{ margin:0 0 8px; }
+    .fallback .btn{ padding:10px 14px; font-size:.92rem; }
 
     footer{
-      margin-top:18px;display:flex;justify-content:space-between;align-items:center;
+      margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;
       color:var(--muted);font-size:.85rem
     }
+    footer a{ color:var(--muted); }
+    .gear{
+      border:0; background:transparent; color:#c4c9d1; cursor:pointer; padding:4px;
+      display:inline-flex; border-radius:8px;
+    }
+    .gear:hover{ color:var(--muted); }
+    .gear:focus-visible{ outline:3px solid var(--p2); }
 
-    .sub a{
-  color: var(--muted);
-  text-decoration: none;
-}
-.sub a:hover{
-  text-decoration: underline;
-}
+    /* Tabs */
 
+
+    /* QR */
+    .qr-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:6px 0 4px; }
+    .qr-frame{ width:min(280px,100%); aspect-ratio:1; padding:14px; background:#fff; border:1px solid #e5e7eb; border-radius:16px; }
+    .qr-frame svg{ width:100%; height:100%; display:block; }
+    .qr-caption{ text-align:center; margin:0; }
+    .qr-caption strong{ display:block; color:var(--ink); font-weight:600; }
+    .qr-caption span{ color:var(--muted); font-size:.9rem; }
+    .seg{ display:inline-flex; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; }
+    .seg button{ padding:8px 14px; border:0; background:#fff; color:var(--muted); font:inherit; font-size:.9rem; font-weight:500; cursor:pointer; }
+    .seg button + button{ border-left:1px solid #e5e7eb; }
+    .seg button[aria-pressed="true"]{ background:var(--p1); color:#fff; }
+    .seg button:focus-visible{ outline:3px solid var(--p2); outline-offset:-3px; }
+    .seg button[disabled]{ color:#c4c9d1; cursor:not-allowed; }
+
+    /* Owner settings */
+    .settings{ margin-top:16px; padding:16px; border-radius:14px; background:#f8fafc; border:1px solid #e5e7eb; }
+    .settings h2{ font-size:1rem; }
+    .settings p{ margin:0 0 10px; }
+    .settings .actions{ display:flex; gap:10px; margin-top:10px; }
+    .settings .actions .btn{ flex:1; padding:10px 12px; font-size:.92rem; }
+
+    @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <!-- NEW ELEMENT 1 -->
       <img id="avatar" class="avatar" src="profile.jpg" alt="Photo of David Pedrick">
-      <!-- NEW ELEMENT 2 -->
       <img id="logo" class="logo" src="logo.png" alt="Ekotrope logo">
 
       <h1 id="name">David Pedrick</h1>
-      <div class="sub" id="subtitle">
-        <a href="#" id ="company"></a></div>
+      <div class="sub" id="subtitle"><a href="#" id="company"></a></div>
 
-      <div class="contact" id="contactInfo" aria-label="contact information">
-        <a id="contactPhone" class="contact-link" href="#"></a>
-        <a id="contactEmail" class="contact-link" href="#"></a>
-        <a id="contactLocation" class="contact-link" ></a>
-      </div>
 
-      <div class="grid" id="buttonRow" style="margin-bottom:12px">
-        <button class="btn" id="btnAdd">
-          <svg xmlns="http://www.w3.org/2000/svg" 
-           width="16" height="16" viewBox="0 0 24 24" 
-           fill="none" stroke="currentColor" stroke-width="2" 
-           stroke-linecap="round" stroke-linejoin="round" 
-           style="margin-right:6px; vertical-align:middle;">
-        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-        <polyline points="17 21 17 13 7 13 7 21"/>
-        <polyline points="7 3 7 8 15 8"/>
-      </svg>
-          Save David's contact info</button>
-        <button class="btn" id="btnShare"> <svg xmlns="http://www.w3.org/2000/svg" 
-           width="16" height="16" viewBox="0 0 24 24" 
-           fill="none" stroke="currentColor" stroke-width="2" 
-           stroke-linecap="round" stroke-linejoin="round" 
-           style="margin-right:6px; vertical-align:middle;">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-        <polyline points="22,6 12,13 2,6"/>
-      </svg> Email David your contact info</button>
-      </div>
-
-      <form id="form" class="grid collapsed" novalidate>
-        <div class="row">
-          <input name="first" placeholder="Your First Name" autocomplete="given-name" required />
-          <input name="last" placeholder="Your Last Name" autocomplete="family-name" required />
+      <!-- Tab 1: send David your info -->
+      <section id="panelContact">
+        <div class="contact" id="contactInfo" aria-label="David's contact information">
+          <a id="contactPhone" class="contact-link" href="#"></a>
+          <a id="contactEmail" class="contact-link" href="#"></a>
+          <span id="contactLocation" class="contact-link"></span>
         </div>
-        <input id = "phone" type="tel" inputmode = "tel" name="phone" placeholder="Your Phone #" autocomplete="tel"  required />
-        <input name="website" placeholder="Website (optional)" autocomplete="url" />
-        <div id="status" class="muted"></div>
-      </form>
+
+        <h2>Send David your info</h2>
+        <p class="lead">Fill in your details below. The button opens a ready-to-send email to David in your mail app.</p>
+
+        <form id="form" class="grid" novalidate>
+          <div class="row">
+            <div>
+              <label for="first">Your first name</label>
+              <input id="first" name="first" placeholder="Jane" autocomplete="given-name" required />
+            </div>
+            <div>
+              <label for="last">Your last name</label>
+              <input id="last" name="last" placeholder="Smith" autocomplete="family-name" required />
+            </div>
+          </div>
+          <div>
+            <label for="phone">Your phone number</label>
+            <input id="phone" type="tel" inputmode="tel" name="phone" placeholder="617 555 0123" autocomplete="tel" required />
+          </div>
+          <div>
+            <label for="note">Message to David <small>(edit if you like)</small></label>
+            <textarea id="note" name="note" rows="2"></textarea>
+          </div>
+
+          <button type="button" class="btn is-muted" id="btnSend">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <span id="btnSendText">Enter your name and phone to continue</span>
+          </button>
+          <p class="hint muted" id="hint">Opens your default mail app. Remember to press Send there.</p>
+        </form>
+
+        <div class="fallback" id="fallback" hidden>
+          <p class="muted">Wrong email account came up? Copy the message and paste it into your work email instead.</p>
+          <button type="button" class="btn btn-ghost" id="btnCopy">Copy email to David</button>
+        </div>
+      </section>
+
+
+      <!-- Owner panel (David only): QR code + prefilled message. Open with the gear or #qr -->
+      <section class="settings" id="settings" hidden>
+        <h2 style="margin-top:0">Your QR code</h2>
+        <p class="muted">Only you see this panel. Show the code or let someone scan it.</p>
+        <div class="qr-wrap">
+          <div class="qr-frame" id="qrFrame" role="img" aria-label="QR code"></div>
+          <p class="qr-caption" id="qrCaption"></p>
+          <div class="seg" role="group" aria-label="What the QR code contains">
+            <button type="button" id="qrModeUrl" aria-pressed="true">Link to this page</button>
+            <button type="button" id="qrModeVcard" aria-pressed="false">Contact card</button>
+          </div>
+        </div>
+
+        <h2 style="margin-top:22px">Prefilled message</h2>
+        <p class="muted">Whatever you type here appears in the visitor's email before they send it. It's saved on this device and travels inside the QR link, so people who scan get it too.</p>
+        <label for="ownerNote">Message</label>
+        <textarea id="ownerNote" rows="2" placeholder="Great meeting you at the RESNET conference!"></textarea>
+        <div class="actions">
+          <button type="button" class="btn" id="saveNote">Save</button>
+          <button type="button" class="btn btn-ghost" id="clearNote">Clear</button>
+        </div>
+        <p class="hint muted" id="settingsStatus"></p>
+      </section>
 
       <footer>
-        <span id="caps" class="muted"></span>
-        <a id="emailMe" class="muted" href="#"></a>
+        <a id="saveVcard" href="#">Save David's contact card instead</a>
+        <button type="button" class="gear" id="gear" aria-label="Owner tools" title="Owner tools">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
       </footer>
     </div>
   </div>
+
+  <!-- QR Code Generator for JavaScript, (c) 2009 Kazuhiko Arase, MIT license. Inlined so the page works offline. -->
+  <script>
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+  </script>
 
   <script>
   // --- CONFIGURE YOUR DETAILS HERE ---
@@ -229,78 +261,107 @@
     state: "MA",
     website: "https://www.ekotrope.com",
     photoUrl: "profile.jpg",
-    logoUrl: "logo.png"
+    logoUrl: "logo.png",
+    // Public URL where this page lives. Used for the QR link. If blank, the
+    // browser's current address is used (which fails for local files).
+    pageUrl: "",
+    // Message shown when you haven't set one in the gear menu.
+    defaultNote: "Great meeting you!"
   };
   // -----------------------------------
 
-  // Inject name/subtitle
+  const firstName = MY.fullName.split(' ')[0];
   document.getElementById('name').textContent = MY.fullName;
-  // Set images
-  const avatarEl = document.getElementById('avatar');
-  const logoEl = document.getElementById('logo');
-  if (avatarEl && MY.photoUrl) avatarEl.src = MY.photoUrl;
-  if (logoEl && MY.logoUrl) logoEl.src = MY.logoUrl;
+  document.getElementById('avatar').src = MY.photoUrl;
+  document.getElementById('logo').src = MY.logoUrl;
 
-  // Set fallback href for the Email link
-  const emailMeLink = document.getElementById('emailMe');
-  if (emailMeLink) emailMeLink.href = `mailto:${MY.email}`;
-
-  // Populate contact info block
   const contactPhone = document.getElementById('contactPhone');
   const contactEmail = document.getElementById('contactEmail');
-  const contactLocation = document.getElementById('contactLocation');
+  contactPhone.href = `tel:${MY.phone}`;  contactPhone.textContent = MY.phone;
+  contactEmail.href = `mailto:${MY.email}`; contactEmail.textContent = MY.email;
+  document.getElementById('contactLocation').textContent = `${MY.city}, ${MY.state}`;
   const companyLink = document.getElementById('company');
-  if (contactPhone) {
-    contactPhone.href = `tel:${MY.phone}`;
-    contactPhone.textContent = MY.phone;
-  }
-  if (contactEmail) {
-    contactEmail.href = `mailto:${MY.email}`;
-    contactEmail.textContent = MY.email;
-  }
-  if (contactLocation) {
-    const locText = `${MY.city}, ${MY.state}`;
-    contactLocation.textContent = locText;
-  }
-  if(companyLink){
-    companyLink.textContent = `${MY.org} • ${MY.title}`;
-    companyLink.href = MY.website;
-    companyLink.target = '_blank';
-    companyLink.rel = 'noopener noreferrer';
-  }
+  companyLink.textContent = `${MY.org} • ${MY.title}`;
+  companyLink.href = MY.website; companyLink.target = '_blank'; companyLink.rel = 'noopener noreferrer';
 
+  // --- Prefilled message: URL param wins (visitor who scanned), then this device's saved note, then default ---
+  const NOTE_KEY = 'contactcard.note';
+  const params = new URLSearchParams(location.search);
+  function savedNote() { try { return localStorage.getItem(NOTE_KEY) || ''; } catch (e) { return ''; } }
+  function activeNote() { return params.get('m') || savedNote() || MY.defaultNote; }
 
-  const phoneInput = document.getElementById('phone');
+  const noteField = document.getElementById('note');
+  noteField.value = activeNote();
 
-  phoneInput.addEventListener('input', (e) => {
-   let value = e.target.value.replace(/\D/g, ''); // remove all non-digits
-
-    // Handle optional country code
+  // --- Phone formatting ---
+  document.getElementById('phone').addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
     let country = '';
-    if (value.startsWith('1')) {
-      country = '1 ';
-      value = value.slice(1);
-    }
-
-    if (value.length > 0 && value.length <= 3) {
-      value = `${value.slice(0,3)}`;
-    } else if (value.length > 3 && value.length <= 6) {
-      value = `${value.slice(0,3)} ${value.slice(3)}`;
-    } else if (value.length > 6) {
-      value = `${value.slice(0,3)} ${value.slice(3,6)} ${value.slice(6,10)}`;
-    }
-
+    if (value.startsWith('1') && value.length > 10) { country = '1 '; value = value.slice(1); }
+    if (value.length > 6) value = `${value.slice(0,3)} ${value.slice(3,6)} ${value.slice(6,10)}`;
+    else if (value.length > 3) value = `${value.slice(0,3)} ${value.slice(3)}`;
     e.target.value = country + value.trim();
   });
 
-  // Build a vCard 3.0 string
+  // --- Email flow ---
+  const form = document.getElementById('form');
+  const btnSend = document.getElementById('btnSend');
+  const btnSendText = document.getElementById('btnSendText');
+  const hint = document.getElementById('hint');
+  const fallback = document.getElementById('fallback');
+  const f = () => form.first.value.trim(), l = () => form.last.value.trim(), p = () => form.phone.value.trim();
+  const formIsValid = () => f() && l() && p();
+
+  function emailParts() {
+    const body = `Hi ${firstName} - ${noteField.value.trim() || MY.defaultNote}\n\nHere's my contact info:\n${f()} ${l()}\n${p()}`;
+    const subject = `Nice to meet you - ${f()} ${l()}`;
+    return { subject, body };
+  }
+
+  function updateSendButton() {
+    if (formIsValid()) {
+      btnSend.classList.remove('is-muted'); btnSend.classList.add('ready');
+      btnSendText.textContent = `Open email to ${firstName}`;
+    } else {
+      btnSend.classList.add('is-muted'); btnSend.classList.remove('ready');
+      btnSendText.textContent = 'Enter your name and phone to continue';
+    }
+  }
+  form.querySelectorAll('input').forEach(i => i.addEventListener('input', updateSendButton));
+  updateSendButton();
+
+  btnSend.addEventListener('click', () => {
+    if (!formIsValid()) {
+      const missing = [form.first, form.last, form.phone].find(x => !x.value.trim());
+      if (missing) missing.focus();
+      return;
+    }
+    const { subject, body } = emailParts();
+    location.href = `mailto:${MY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    hint.textContent = `Your mail app should be open now. Press Send there to finish.`;
+    hint.classList.add('ok');
+    fallback.hidden = false;
+  });
+
+  document.getElementById('btnCopy').addEventListener('click', async (e) => {
+    const { subject, body } = emailParts();
+    const text = `To: ${MY.email}\nSubject: ${subject}\n\n${body}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      e.target.textContent = 'Copied. Paste it into your work email.';
+    } catch (err) {
+      window.prompt('Copy this text:', text);
+    }
+  });
+
+  // --- vCard (secondary path) ---
   function buildVCard() {
     const parts = MY.fullName.trim().split(/\s+/);
     const last = parts.pop() || "";
     const first = parts.join(" ");
     const now = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
     const esc = s => (s||"").replaceAll(",","\\,");
-    const lines = [
+    return [
       "BEGIN:VCARD","VERSION:3.0",
       `N:${esc(last)};${esc(first)};;;`,
       `FN:${esc(MY.fullName)}`,
@@ -312,111 +373,96 @@
       `URL:${MY.website}`,
       `REV:${now}`,
       "END:VCARD"
-    ];
-    return lines.join("\r\n");
+    ].join("\r\n");
   }
-
-  function downloadVCard() {
+  document.getElementById('saveVcard').addEventListener('click', (e) => {
+    e.preventDefault();
     const blob = new Blob([buildVCard()], { type: 'text/vcard;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `${MY.fullName.replace(/\s+/g,'_')}.vcf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url), 500);
-  }
-
-  function openMailto(bodyText, subjectText) {
-    const subject = subjectText || 'Great to meet you';
-    const defaultBody = `Here is my contact info.\n\n${''}\n\nFrom,\n${''}\n${''}\n${''}`;
-    const body = bodyText || defaultBody;
-    const mailto = `mailto:${MY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    location.href = mailto;
-  }
-
-  // Buttons
-  const btnAdd = document.getElementById('btnAdd');
-  const btnShare = document.getElementById('btnShare');
-  if (btnAdd) btnAdd.addEventListener('click', downloadVCard);
-  document.getElementById('emailMe').addEventListener('click', (e)=>{ e.preventDefault(); openMailto(); });
-
-  // Share Your Contact (no backend)
-  const form = document.getElementById('form');
-
-  function formIsValid() {
-    const f = form.querySelector('[name="first"]');
-    const l = form.querySelector('[name="last"]');
-    const p = form.querySelector('[name="phone"]');
-    return f && l && p && f.value.trim() !== '' && l.value.trim() !== '' && p.value.trim() !== '';
-  }
-
-  function updateShareButtonState() {
-    if (formIsValid()) {
-      btnShare.classList.add('highlight');
-      btnShare.textContent = 'Send Email';
-    } else {
-      btnShare.classList.remove('highlight');
-      btnShare.textContent = 'Email David your contact info';
-    }
-  }
-
-  // show form with slide-down effect + visually mute Add button + highlight Email button
-  let formVisible = false;
-  btnShare.addEventListener('click', (e) => {
-    e.preventDefault();
-
-    // First click: reveal form, visually mute Add, highlight Email
-    if (!formVisible) {
-      form.classList.remove('collapsed');
-      form.classList.add('expanded');
-
-      // move the share button after the form
-      const buttonRow = document.getElementById('buttonRow');
-      const parent = buttonRow.parentNode;
-      parent.insertBefore(btnShare, form.nextSibling);
-
-      btnShare.classList.add('slide-in', 'highlight'); // Primary 2 highlight
-
-      // Grey out Add Contact but KEEP it clickable
-      btnAdd.classList.add('is-muted');
-
-      formVisible = true;
-      form.querySelectorAll('input,textarea').forEach(inp => inp.addEventListener('input', updateShareButtonState));
-      updateShareButtonState();
-      return;
-    }
-
-    // Second click: if valid, send email and restore buttons
-    if (formVisible && formIsValid()) {
-      const fd = new FormData(form);
-      const customNote = fd.get('note') || '';
-      const website = fd.get('website') || '';
-      const msg = `Hi David - Here is my contact info.\n\n${customNote}\n\nFrom,\n${fd.get('first')} ${fd.get('last')}\n${fd.get('phone')||''}\n${website}`;
-      location.href = `mailto:${MY.email}?subject=${encodeURIComponent('Nice to meet you')}&body=${encodeURIComponent(msg)}`;
-
-      // collapse form
-      form.classList.remove('expanded');
-      form.classList.add('collapsed');
-      formVisible = false;
-
-      // move share button back and remove highlight
-      const buttonRow = document.getElementById('buttonRow');
-      buttonRow.appendChild(btnShare);
-      btnShare.classList.remove('slide-in', 'highlight');
-      btnShare.textContent = 'Email me your contact info';
-
-      // Restore Add Contact visual state
-      btnAdd.classList.remove('is-muted');
-    } else {
-      // focus first missing field for clarity
-      const f = form.querySelector('[name="first"]');
-      const l = form.querySelector('[name="last"]');
-      if (f && f.value.trim() === '') f.focus();
-      else if (l && l.value.trim() === '') l.focus();
-    }
+    a.href = url; a.download = `${MY.fullName.replace(/\s+/g,'_')}.vcf`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
   });
+
+
+  // --- QR code ---
+  const qrFrame = document.getElementById('qrFrame');
+  const qrCaption = document.getElementById('qrCaption');
+  const qrModeUrl = document.getElementById('qrModeUrl');
+  const qrModeVcard = document.getElementById('qrModeVcard');
+
+  function basePageUrl() {
+    if (MY.pageUrl) return MY.pageUrl;
+    if (location.protocol === 'file:') return '';
+    return location.origin + location.pathname;
+  }
+  function pageUrlForQR() {
+    const base = basePageUrl();
+    if (!base) return '';
+    const note = savedNote();
+    return note ? `${base}?m=${encodeURIComponent(note)}` : base;
+  }
+
+  let qrMode = basePageUrl() ? 'url' : 'vcard';
+  if (!basePageUrl()) { qrModeUrl.disabled = true; qrModeUrl.title = 'Set MY.pageUrl in the page source to enable this'; }
+
+  let qrRendered = '';
+  function renderQR() {
+    const isUrl = qrMode === 'url';
+    const data = isUrl ? pageUrlForQR() : buildVCard();
+    if (data !== qrRendered) {
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(data, 'Byte');
+        qr.make();
+        qrFrame.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+        qrRendered = data;
+        qrFrame.setAttribute('aria-label', isUrl ? 'QR code linking to this page' : `QR code with ${MY.fullName}'s contact card`);
+      } catch (err) {
+        qrFrame.textContent = 'Could not build the QR code.';
+        console.error(err);
+      }
+    }
+    qrCaption.innerHTML = isUrl
+      ? `<strong>Scan to open this page</strong><span>Works with any phone camera</span>`
+      : `<strong>Scan to save ${firstName}'s contact</strong><span>Adds the card directly, no internet needed</span>`;
+    qrModeUrl.setAttribute('aria-pressed', isUrl ? 'true' : 'false');
+    qrModeVcard.setAttribute('aria-pressed', isUrl ? 'false' : 'true');
+  }
+  qrModeUrl.addEventListener('click', () => { qrMode = 'url'; renderQR(); });
+  qrModeVcard.addEventListener('click', () => { qrMode = 'vcard'; renderQR(); });
+
+  // --- Owner settings ---
+  const settings = document.getElementById('settings');
+  const ownerNote = document.getElementById('ownerNote');
+  const settingsStatus = document.getElementById('settingsStatus');
+  function openOwnerPanel(open) {
+    settings.hidden = !open;
+    if (open) { ownerNote.value = savedNote(); renderQR(); settings.scrollIntoView({ block: 'start' }); }
+  }
+  document.getElementById('gear').addEventListener('click', () => openOwnerPanel(settings.hidden));
+  document.getElementById('saveNote').addEventListener('click', () => {
+    try { localStorage.setItem(NOTE_KEY, ownerNote.value.trim()); } catch (e) {}
+    noteField.value = activeNote();
+    qrRendered = ''; renderQR();
+    settingsStatus.textContent = 'Saved. Visitors will see this message.';
+  });
+  document.getElementById('clearNote').addEventListener('click', () => {
+    try { localStorage.removeItem(NOTE_KEY); } catch (e) {}
+    ownerNote.value = '';
+    noteField.value = activeNote();
+    qrRendered = ''; renderQR();
+    settingsStatus.textContent = 'Cleared. Back to the default message.';
+  });
+
+  // Open straight to the owner panel with #qr (the home-screen app does this)
+  if (location.hash === '#qr' || location.hash === '#settings') openOwnerPanel(true);
+
+  // --- Offline / home-screen support ---
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
   </script>
 </body>
 </html>
